@@ -1,0 +1,6 @@
+{
+  "name": "Generator Modul Ajar Kemenag KBC & Deep Learning",
+  "description": "Generator Modul Ajar dan RPP resmi Kementerian Agama RI dengan integrasi Kurikulum Berbasis Cinta (KBC) dan Pembelajaran Mendalam (Deep Learning).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
