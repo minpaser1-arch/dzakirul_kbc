@@ -17,6 +17,21 @@ export default function App() {
   const [isGuideOpen, setIsGuideOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isMissingApiKey, setIsMissingApiKey] = useState(false);
+
+  // Check health on mount to verify API Key availability (e.g. on Vercel)
+  useEffect(() => {
+    fetch("/api/health")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.hasApiKey === false) {
+          setIsMissingApiKey(true);
+        }
+      })
+      .catch(() => {
+        // Ignore network errors on initial check
+      });
+  }, []);
 
   // Load history from localStorage on mount
   useEffect(() => {
@@ -136,6 +151,26 @@ export default function App() {
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         
+        {/* Vercel Environment Notice if GEMINI_API_KEY is not configured */}
+        {isMissingApiKey && (
+          <div className="mb-6 p-4 rounded-xl bg-amber-50 border border-amber-300 text-amber-950 flex items-start gap-3 shadow-xs">
+            <AlertCircle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+            <div className="flex-1 text-xs sm:text-sm space-y-1">
+              <span className="font-bold block">Pemberitahuan Konfigurasi Vercel:</span>
+              <p className="text-amber-900 leading-relaxed">
+                Environment variable <code>GEMINI_API_KEY</code> belum terdeteksi di server. 
+                Jika aplikasi ini di-deploy di Vercel, buka <strong>Vercel Dashboard &gt; Project Settings &gt; Environment Variables</strong>, tambahkan <code>GEMINI_API_KEY</code> dengan API Key Gemini Anda, lalu klik <strong>Redeploy</strong>.
+              </p>
+            </div>
+            <button
+              onClick={() => setIsMissingApiKey(false)}
+              className="text-amber-800 hover:text-amber-950 font-bold text-xs"
+            >
+              Tutup
+            </button>
+          </div>
+        )}
+
         {/* Error Alert */}
         {errorMessage && (
           <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-900 flex items-start gap-3 shadow-xs">
